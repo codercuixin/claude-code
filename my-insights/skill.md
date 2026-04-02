@@ -5,7 +5,7 @@ This repository's skill system is prompt-driven. A skill is not mainly a TypeScr
 ## 1. What a skill is
 
 - A skill becomes a `PromptCommand` / `Command` at runtime.
-- The key type definitions are in [src/types/command.ts](/Users/cuixin/work/claude-code/src/types/command.ts#L25) and [src/types/command.ts](/Users/cuixin/work/claude-code/src/types/command.ts#L175).
+- The key type definitions are in [src/types/command.ts](./src/types/command.ts#L25) and [src/types/command.ts](./src/types/command.ts#L175).
 Important frontmatter fields:
 
 - `description`
@@ -28,10 +28,10 @@ Important frontmatter fields:
 
 Key code:
 
-- Frontmatter parsing: [src/utils/frontmatterParser.ts](/Users/cuixin/work/claude-code/src/utils/frontmatterParser.ts)
-- Shared skill field parsing: [src/skills/loadSkillsDir.ts:185](/Users/cuixin/work/claude-code/src/skills/loadSkillsDir.ts#L185)
-- Command creation: [src/skills/loadSkillsDir.ts:270](/Users/cuixin/work/claude-code/src/skills/loadSkillsDir.ts#L270)
-- Directory scanning: [src/skills/loadSkillsDir.ts:638](/Users/cuixin/work/claude-code/src/skills/loadSkillsDir.ts#L638)
+- Frontmatter parsing: [src/utils/frontmatterParser.ts](./src/utils/frontmatterParser.ts)
+- Shared skill field parsing: [src/skills/loadSkillsDir.ts:185](./src/skills/loadSkillsDir.ts#L185)
+- Command creation: [src/skills/loadSkillsDir.ts:270](./src/skills/loadSkillsDir.ts#L270)
+- Directory scanning: [src/skills/loadSkillsDir.ts:638](./src/skills/loadSkillsDir.ts#L638)
 
 ## 3. How a skill becomes visible to the model
 
@@ -41,10 +41,10 @@ Key code:
 
 Key code:
 
-- Skill filtering for model use: [src/commands.ts:563](/Users/cuixin/work/claude-code/src/commands.ts#L563)
-- Slash-command skill filtering: [src/commands.ts:586](/Users/cuixin/work/claude-code/src/commands.ts#L586)
-- System prompt assembly: [src/constants/prompts.ts:444](/Users/cuixin/work/claude-code/src/constants/prompts.ts#L444)
-- Skill tool prompt: [src/tools/SkillTool/prompt.ts](/Users/cuixin/work/claude-code/src/tools/SkillTool/prompt.ts)
+- Skill filtering for model use: [src/commands.ts:563](./src/commands.ts#L563)
+- Slash-command skill filtering: [src/commands.ts:586](./src/commands.ts#L586)
+- System prompt assembly: [src/constants/prompts.ts:444](./src/constants/prompts.ts#L444)
+- Skill tool prompt: [src/tools/SkillTool/prompt.ts](./src/tools/SkillTool/prompt.ts)
 
 ## 4. How a skill is executed
 
@@ -55,8 +55,8 @@ There are two main entry points:
 
 Key code:
 
-- Slash-command expansion path: [src/utils/processUserInput/processSlashCommand.tsx:827](/Users/cuixin/work/claude-code/src/utils/processUserInput/processSlashCommand.tsx#L827)
-- Tool-based invocation path: [src/tools/SkillTool/SkillTool.ts:332](/Users/cuixin/work/claude-code/src/tools/SkillTool/SkillTool.ts#L332)
+- Slash-command expansion path: [src/utils/processUserInput/processSlashCommand.tsx:827](./src/utils/processUserInput/processSlashCommand.tsx#L827)
+- Tool-based invocation path: [src/tools/SkillTool/SkillTool.ts:332](./src/tools/SkillTool/SkillTool.ts#L332)
 
 Both paths eventually call the skill's `getPromptForCommand()` and turn the markdown content into actual model-visible prompt text.
 
@@ -73,10 +73,10 @@ When a file-based skill is executed, `createSkillCommand()` defines a `getPrompt
 
 Key code:
 
-- Expansion pipeline: [src/skills/loadSkillsDir.ts:344](/Users/cuixin/work/claude-code/src/skills/loadSkillsDir.ts#L344)
-- `${CLAUDE_SKILL_DIR}` substitution: [src/skills/loadSkillsDir.ts:356](/Users/cuixin/work/claude-code/src/skills/loadSkillsDir.ts#L356)
-- `${CLAUDE_SESSION_ID}` substitution: [src/skills/loadSkillsDir.ts:365](/Users/cuixin/work/claude-code/src/skills/loadSkillsDir.ts#L365)
-- Shell expansion call: [src/skills/loadSkillsDir.ts:375](/Users/cuixin/work/claude-code/src/skills/loadSkillsDir.ts#L375)
+- Expansion pipeline: [src/skills/loadSkillsDir.ts:344](./src/skills/loadSkillsDir.ts#L344)
+- `${CLAUDE_SKILL_DIR}` substitution: [src/skills/loadSkillsDir.ts:356](./src/skills/loadSkillsDir.ts#L356)
+- `${CLAUDE_SESSION_ID}` substitution: [src/skills/loadSkillsDir.ts:365](./src/skills/loadSkillsDir.ts#L365)
+- Shell expansion call: [src/skills/loadSkillsDir.ts:375](./src/skills/loadSkillsDir.ts#L375)
 
 ## 6. How scripts inside a skill are executed
 
@@ -116,16 +116,16 @@ Execution flow:
 
 Key code:
 
-- `shell:` parsing: [src/utils/frontmatterParser.ts:337](/Users/cuixin/work/claude-code/src/utils/frontmatterParser.ts#L337)
-- `shell:` validation: [src/utils/frontmatterParser.ts:351](/Users/cuixin/work/claude-code/src/utils/frontmatterParser.ts#L351)
-- Shell expansion patterns: [src/utils/promptShellExecution.ts:48](/Users/cuixin/work/claude-code/src/utils/promptShellExecution.ts#L48)
-- Shell expansion function: [src/utils/promptShellExecution.ts:69](/Users/cuixin/work/claude-code/src/utils/promptShellExecution.ts#L69)
-- Permission check before execution: [src/utils/promptShellExecution.ts:97](/Users/cuixin/work/claude-code/src/utils/promptShellExecution.ts#L97)
-- Actual tool call: [src/utils/promptShellExecution.ts:115](/Users/cuixin/work/claude-code/src/utils/promptShellExecution.ts#L115)
+- `shell:` parsing: [src/utils/frontmatterParser.ts:337](./src/utils/frontmatterParser.ts#L337)
+- `shell:` validation: [src/utils/frontmatterParser.ts:351](./src/utils/frontmatterParser.ts#L351)
+- Shell expansion patterns: [src/utils/promptShellExecution.ts:48](./src/utils/promptShellExecution.ts#L48)
+- Shell expansion function: [src/utils/promptShellExecution.ts:69](./src/utils/promptShellExecution.ts#L69)
+- Permission check before execution: [src/utils/promptShellExecution.ts:97](./src/utils/promptShellExecution.ts#L97)
+- Actual tool call: [src/utils/promptShellExecution.ts:115](./src/utils/promptShellExecution.ts#L115)
 
 Important boundary:
 
-- MCP skills are treated as untrusted remote content, so their markdown body does not execute `!` shell snippets. See [src/skills/loadSkillsDir.ts:371](/Users/cuixin/work/claude-code/src/skills/loadSkillsDir.ts#L371).
+- MCP skills are treated as untrusted remote content, so their markdown body does not execute `!` shell snippets. See [src/skills/loadSkillsDir.ts:371](./src/skills/loadSkillsDir.ts#L371).
 
 ## 7. Inline vs fork execution
 
@@ -136,8 +136,8 @@ Skills can run in two modes:
 
 Key code:
 
-- Forked execution entry: [src/tools/SkillTool/SkillTool.ts:122](/Users/cuixin/work/claude-code/src/tools/SkillTool/SkillTool.ts#L122)
-- Skill tool main entry: [src/tools/SkillTool/SkillTool.ts:332](/Users/cuixin/work/claude-code/src/tools/SkillTool/SkillTool.ts#L332)
+- Forked execution entry: [src/tools/SkillTool/SkillTool.ts:122](./src/tools/SkillTool/SkillTool.ts#L122)
+- Skill tool main entry: [src/tools/SkillTool/SkillTool.ts:332](./src/tools/SkillTool/SkillTool.ts#L332)
 
 ## 8. Permission model
 
@@ -147,8 +147,8 @@ Key code:
 
 Key code:
 
-- Skill permission checks: [src/tools/SkillTool/SkillTool.ts:453](/Users/cuixin/work/claude-code/src/tools/SkillTool/SkillTool.ts#L453)
-- Safe-property allowlist: [src/tools/SkillTool/SkillTool.ts:876](/Users/cuixin/work/claude-code/src/tools/SkillTool/SkillTool.ts#L876)
+- Skill permission checks: [src/tools/SkillTool/SkillTool.ts:453](./src/tools/SkillTool/SkillTool.ts#L453)
+- Safe-property allowlist: [src/tools/SkillTool/SkillTool.ts:876](./src/tools/SkillTool/SkillTool.ts#L876)
 
 ## 9. Bundled skills and extracted files
 
@@ -156,9 +156,9 @@ Bundled skills may ship with embedded reference files. On first invocation, thos
 
 Key code:
 
-- Bundled skill definition: [src/skills/bundledSkills.ts:15](/Users/cuixin/work/claude-code/src/skills/bundledSkills.ts#L15)
-- Lazy extraction wrapper: [src/skills/bundledSkills.ts:59](/Users/cuixin/work/claude-code/src/skills/bundledSkills.ts#L59)
-- File extraction: [src/skills/bundledSkills.ts:131](/Users/cuixin/work/claude-code/src/skills/bundledSkills.ts#L131)
+- Bundled skill definition: [src/skills/bundledSkills.ts:15](./src/skills/bundledSkills.ts#L15)
+- Lazy extraction wrapper: [src/skills/bundledSkills.ts:59](./src/skills/bundledSkills.ts#L59)
+- File extraction: [src/skills/bundledSkills.ts:131](./src/skills/bundledSkills.ts#L131)
 
 ## 10. End-to-end summary
 
