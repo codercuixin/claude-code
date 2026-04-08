@@ -150,6 +150,7 @@ import sandboxToggle from './commands/sandbox-toggle/index.js'
 import chrome from './commands/chrome/index.js'
 import stickers from './commands/stickers/index.js'
 import advisor from './commands/advisor.js'
+import provider from './commands/provider.js'
 import { logError } from './utils/log.js'
 import { toError } from './utils/errors.js'
 import { logForDebugging } from './utils/debug.js'
@@ -236,7 +237,6 @@ export const INTERNAL_ONLY_COMMANDS = [
   mockLimits,
   bridgeKick,
   version,
-  ...(ultraplan ? [ultraplan] : []),
   ...(subscribePr ? [subscribePr] : []),
   resetLimits,
   resetLimitsNonInteractive,
@@ -258,6 +258,7 @@ export const INTERNAL_ONLY_COMMANDS = [
 const COMMANDS = memoize((): Command[] => [
   addDir,
   advisor,
+  provider,
   agents,
   branch,
   btw,
@@ -339,6 +340,7 @@ const COMMANDS = memoize((): Command[] => [
   ...(peersCmd ? [peersCmd] : []),
   tasks,
   ...(workflowsCmd ? [workflowsCmd] : []),
+  ...(ultraplan ? [ultraplan] : []),
   ...(torch ? [torch] : []),
   ...(process.env.USER_TYPE === 'ant' && !process.env.IS_DEMO
     ? INTERNAL_ONLY_COMMANDS
@@ -415,7 +417,7 @@ const getWorkflowCommands = feature('WORKFLOW_SCRIPTS')
  * so this must be re-evaluated on every getCommands() call.
  */
 export function meetsAvailabilityRequirement(cmd: Command): boolean {
-  if (!cmd.availability) return true
+  if (!cmd.availability || cmd.availability.length === 0) return true
   for (const a of cmd.availability) {
     switch (a) {
       case 'claude-ai':

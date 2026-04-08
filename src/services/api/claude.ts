@@ -299,20 +299,6 @@ export function getExtraBodyParams(betaHeaders?: string[]): JsonObject {
     }
   }
 
-  // Anti-distillation: send fake_tools opt-in for 1P CLI only
-  if (
-    feature('ANTI_DISTILLATION_CC')
-      ? process.env.CLAUDE_CODE_ENTRYPOINT === 'cli' &&
-        shouldIncludeFirstPartyOnlyBetas() &&
-        getFeatureValue_CACHED_MAY_BE_STALE(
-          'tengu_anti_distill_fake_tool_injection',
-          false,
-        )
-      : false
-  ) {
-    result.anti_distillation = ['fake_tools']
-  }
-
   // Handle beta headers if provided
   if (betaHeaders && betaHeaders.length > 0) {
     if (result.anthropic_beta && Array.isArray(result.anthropic_beta)) {
@@ -654,24 +640,51 @@ export function assistantMessageToMessageParam(
     } else {
       return {
         role: 'assistant',
-        content: message.message.content.map((_, i) => ({
-          ..._,
-          ...(i === message.message.content.length - 1 &&
-          _.type !== 'thinking' &&
-          _.type !== 'redacted_thinking' &&
-          (feature('CONNECTOR_TEXT') ? !isConnectorTextBlock(_) : true)
-            ? enablePromptCaching
-              ? { cache_control: getCacheControl({ querySource }) }
-              : {}
-            : {}),
-        })),
+        content: message.message.content.map((_, i) => {
+          const contentBlock = stripGeminiProviderMetadata(_)
+          return {
+            ...contentBlock,
+            ...(i === message.message.content.length - 1 &&
+            contentBlock.type !== 'thinking' &&
+            contentBlock.type !== 'redacted_thinking' &&
+            (feature('CONNECTOR_TEXT')
+              ? !isConnectorTextBlock(contentBlock)
+              : true)
+              ? enablePromptCaching
+                ? { cache_control: getCacheControl({ querySource }) }
+                : {}
+              : {}),
+          }
+        }),
       }
     }
   }
   return {
     role: 'assistant',
-    content: message.message.content,
+    content:
+      typeof message.message.content === 'string'
+        ? message.message.content
+        : message.message.content.map(stripGeminiProviderMetadata),
   }
+}
+
+function stripGeminiProviderMetadata<T extends BetaContentBlockParam | string>(
+  contentBlock: T,
+): T {
+  if (
+    typeof contentBlock === 'string' ||
+    !('_geminiThoughtSignature' in contentBlock)
+  ) {
+    return contentBlock
+  }
+
+  const {
+    _geminiThoughtSignature: _unusedGeminiThoughtSignature,
+    ...rest
+  } = contentBlock as T & {
+    _geminiThoughtSignature?: string
+  }
+  return rest as T
 }
 
 export type Options = {
@@ -1314,6 +1327,34 @@ async function* queryModel(
     messagesForAPI,
     API_MAX_MEDIA_PER_REQUEST,
   )
+
+  // OpenAI-compatible provider: delegate to the OpenAI adapter layer
+  // after shared preprocessing (message normalization, tool filtering,
+  // media stripping) but before Anthropic-specific logic (betas, thinking, caching).
+  if (getAPIProvider() === 'openai') {
+    const { queryModelOpenAI } = await import('./openai/index.js')
+    yield* queryModelOpenAI(messagesForAPI, systemPrompt, filteredTools, signal, options)
+    return
+  }
+
+  if (getAPIProvider() === 'gemini') {
+    const { queryModelGemini } = await import('./gemini/index.js')
+    yield* queryModelGemini(
+      messagesForAPI,
+      systemPrompt,
+      filteredTools,
+      signal,
+      options,
+      thinkingConfig,
+    )
+    return
+  }
+
+  if (getAPIProvider() === 'grok') {
+    const { queryModelGrok } = await import('./grok/index.js')
+    yield* queryModelGrok(messagesForAPI, systemPrompt, filteredTools, signal, options)
+    return
+  }
 
   // Instrumentation: Track message count after normalization
   logEvent('tengu_api_after_normalize', {
